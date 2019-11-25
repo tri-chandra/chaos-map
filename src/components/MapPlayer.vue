@@ -1,16 +1,17 @@
 <template>
     <div>
+        <img class="minimap" :src="imgDataUrl"/>
         <div class="side-panel">
             <h2>Tile Type</h2>
-            <label><input type="radio" v-model="action" value="remove" />Remove</label><br />
-            <label><input type="radio" v-model="action" value="basic" />Basic</label><br />
-            <label><input type="radio" v-model="action" value="elite" />Elite</label><br />
-            <label><input type="radio" v-model="action" value="event" />Event</label><br />
-            <label><input type="radio" v-model="action" value="gold" />Gold</label><br />
-            <label><input type="radio" v-model="action" value="healing" />Healing</label><br />
-            <label><input type="radio" v-model="action" value="monument" />Monument</label><br />
-            <label><input type="radio" v-model="action" value="prison" />Prison</label><br />
-            <label><input type="radio" v-model="action" value="end" />End Tile</label><br />
+            <label><input type="radio" v-model="action" value="remove" />Remove</label>
+            <label><input type="radio" v-model="action" value="basic" />Basic</label>
+            <label><input type="radio" v-model="action" value="elite" />Elite</label>
+            <label><input type="radio" v-model="action" value="event" />Event</label>
+            <label><input type="radio" v-model="action" value="gold" />Gold</label>
+            <label><input type="radio" v-model="action" value="healing" />Healing</label>
+            <label><input type="radio" v-model="action" value="monument" />Monument</label>
+            <label><input type="radio" v-model="action" value="prison" />Prison</label>
+            <label><input type="radio" v-model="action" value="end" />End Tile</label>
         </div>
         <Canvas class="canvas-panel" ref="canvas" :viewBox="bbox" :width="canvasWidth">
             <template v-for="(nodes, i) in map.map">
@@ -25,7 +26,6 @@
                 />
             </template>
         </Canvas>
-        <img class="minimap" :src="imgDataUrl"/>
     </div>
 </template>
 
@@ -112,31 +112,33 @@ export default {
 
 <style scoped>
 .side-panel {
-    height: 100%;
-    width: 180px;
+    height: 200px;
+    width: calc(100vw - 200px);
     position: fixed;
     z-index: 1;
-    top: 0;
-    left: 0;
+    bottom: 0;
     background-color: #444;
     overflow-x: hidden;
-    padding-top: 20px;
     color: aliceblue;
 }
 .canvas-panel {
     /* margin-left: 200px; */
     overflow: scroll;
-    max-width: 800px;
+    height: calc(100vh - 200px);
 }
 .minimap {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    bottom: 0;
     right: 0;
     max-width: 200px;
-    border: solid 1px;
+    max-height: 200px;
+    /* border: solid 1px white; */
+    z-index: 100;
+    background-color: #aaa;
 }
 label {
-    left: 40px;
-    position: absolute;
+    /* left: 40px;
+    position: absolute; */
+    padding: 20px;
 }
 </style>
