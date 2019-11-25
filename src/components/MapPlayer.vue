@@ -1,6 +1,8 @@
 <template>
     <div>
+        <p class="minimap-description">To copy</p>
         <img class="minimap" :src="imgDataUrl"/>
+        
         <div class="bottom-panel">
             <h2>Tile Type</h2>
             <div class="option-flex-container">
@@ -151,6 +153,15 @@ export default {
     /* border: solid 1px white; */
     z-index: 100;
     background-color: #aaa;
+}
+.minimap-description {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 200px;
+    margin: 0;
+    padding: 0;
+    z-index: 101;
 }
 .option-flex-container {
     display: flex;
