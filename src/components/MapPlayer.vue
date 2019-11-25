@@ -1,17 +1,31 @@
 <template>
     <div>
         <img class="minimap" :src="imgDataUrl"/>
-        <div class="side-panel">
+        <div class="bottom-panel">
             <h2>Tile Type</h2>
-            <label><input type="radio" v-model="action" value="remove" />Remove</label>
-            <label><input type="radio" v-model="action" value="basic" />Basic</label>
-            <label><input type="radio" v-model="action" value="elite" />Elite</label>
-            <label><input type="radio" v-model="action" value="event" />Event</label>
-            <label><input type="radio" v-model="action" value="gold" />Gold</label>
-            <label><input type="radio" v-model="action" value="healing" />Healing</label>
-            <label><input type="radio" v-model="action" value="monument" />Monument</label>
-            <label><input type="radio" v-model="action" value="prison" />Prison</label>
-            <label><input type="radio" v-model="action" value="end" />End Tile</label>
+            <div class="option-flex-container">
+                <label><input type="radio" v-model="action" value="remove" />Remove</label>
+                <label><input type="radio" v-model="action" value="basic" />Basic</label>
+                <label><input type="radio" v-model="action" value="elite" />
+                    Elite
+                    <input v-model="nodeText" :style="{display:(action!='elite'?'none':'block')}" />
+                </label>
+                <label><input type="radio" v-model="action" value="event" />Event</label>
+                <label><input type="radio" v-model="action" value="gold" />Gold</label>
+                <label><input type="radio" v-model="action" value="healing" />Healing</label>
+                <label><input type="radio" v-model="action" value="monument" />
+                    Monument
+                    <input v-model="nodeText" :style="{display:(action!='monument'?'none':'block')}" />
+                </label>
+                <label><input type="radio" v-model="action" value="prison" />
+                    Prison
+                    <input v-model="nodeText"  :style="{display:(action!='prison'?'none':'block')}" />
+                </label>
+                <label><input type="radio" v-model="action" value="end" />
+                    End Tile
+                    <input v-model="nodeText"  :style="{display:(action!='end'?'none':'block')}" />
+                </label>
+            </div>
         </div>
         <Canvas class="canvas-panel" ref="canvas" :viewBox="bbox" :width="canvasWidth">
             <template v-for="(nodes, i) in map.map">
@@ -61,6 +75,7 @@ export default {
             map: mapper,
             NodeType,
             HexSize,
+            nodeText: '',
 
             action: 'basic',
             imgDataUrl: `data:image/svg+xml;utf8,${encodeURIComponent(initImg)}`,
@@ -95,13 +110,13 @@ export default {
             let toCreate = null;
             switch (this.action) {
                 case 'basic': toCreate = Node.createBasicNode(); break;
-                case 'elite': toCreate = Node.createEliteNode(); break;
+                case 'elite': toCreate = Node.createEliteNode(this.nodeText); break;
                 case 'event': toCreate = Node.createEventNode(); break;
                 case 'gold': toCreate = Node.createGoldNode(); break;
                 case 'healing': toCreate = Node.createHealingNode(); break;
-                case 'monument': toCreate = Node.createMonumentNode(); break;
-                case 'prison': toCreate = Node.createPrisonNode(); break;
-                case 'end': toCreate = Node.createEndNode(); break;
+                case 'monument': toCreate = Node.createMonumentNode(this.nodeText); break;
+                case 'prison': toCreate = Node.createPrisonNode(this.nodeText); break;
+                case 'end': toCreate = Node.createEndNode(this.nodeText); break;
             }
             this.map.setValue(toCreate, {x: j, y: i}, Node.createNextNode(), Node.createEmptyNode());
             this.trimWhitespace();
@@ -111,7 +126,7 @@ export default {
 </script>
 
 <style scoped>
-.side-panel {
+.bottom-panel {
     height: 200px;
     width: calc(100vw - 200px);
     position: fixed;
@@ -125,20 +140,29 @@ export default {
     /* margin-left: 200px; */
     overflow: scroll;
     height: calc(100vh - 200px);
+    width: 100vw;
 }
 .minimap {
     position: fixed;
     bottom: 0;
     right: 0;
-    max-width: 200px;
-    max-height: 200px;
+    width: 200px;
+    height: 200px;
     /* border: solid 1px white; */
     z-index: 100;
     background-color: #aaa;
 }
+.option-flex-container {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: flex-start;
+}
 label {
     /* left: 40px;
     position: absolute; */
-    padding: 20px;
+    padding-left: 20px;
+    padding-bottom: 4px;
+    width: 150px;
+    text-align: left;
 }
 </style>

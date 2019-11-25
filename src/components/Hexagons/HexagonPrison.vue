@@ -5,7 +5,7 @@
       stroke="#000000"
       stroke-width="1.5px"
     />
-    <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[summonling]</text>
+    <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[{{node.text}}]</text>
   </g>
 </template>
 

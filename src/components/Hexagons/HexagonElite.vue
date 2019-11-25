@@ -6,7 +6,7 @@
         stroke-width="6px"
       />
       <text :x="x" :y="y+length" color="#000000" font-size="xx-large">S</text>
-      <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[summonling]</text>
+      <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[{{node.text}}]</text>
     </g>
 </template>
 
