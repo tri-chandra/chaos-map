@@ -1,7 +1,9 @@
 <template>
     <div>
-        <p class="minimap-description">To copy</p>
-        <img class="minimap" :src="imgDataUrl"/>
+        <div class="minimap-wrapper">
+            <p class="minimap-description">To copy</p>
+            <img class="minimap" :src="imgDataUrl"/>
+        </div>
         
         <div class="bottom-panel">
             <h2>Tile Type</h2>
@@ -49,6 +51,7 @@
 import HexagonSelector from '@/components/HexagonSelector'
 import Canvas from '@/components/Canvas'
 import Vue from 'vue'
+import SVGConverter from '@/models/SVGConverter'
 
 import Map from '@/models/Map'
 import Node from '@/models/Node'
@@ -88,13 +91,17 @@ export default {
     methods: {
         trimWhitespace() {
             Vue.nextTick(() => {
-                const box = this.$refs.canvas.$el.getBBox();console.log(box);
+                const box = this.$refs.canvas.$el.getBBox();
                 this.bbox = `${box.x} ${box.y} ${box.width} ${box.height}`;
                 this.canvasWidth = box.width;
 
-                Vue.nextTick(() => {
-                    const svgString = (this.$refs.canvas.$el.outerHTML).split('#888888').join('transparent');
-                    this.imgDataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+                Vue.nextTick(async () => {
+                    let svgString = (this.$refs.canvas.$el.outerHTML).split('#888888').join('transparent');
+ 
+                    const converter  = await SVGConverter.loadFromElement(`data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`, box.width, box.height);
+                    this.imgDataUrl = converter.pngDataURL();
+
+                    // this.imgDataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
                 });
             });
         },
@@ -144,13 +151,18 @@ export default {
     height: calc(100vh - 200px);
     width: 100vw;
 }
-.minimap {
+.minimap-wrapper {
     position: fixed;
     bottom: 0;
     right: 0;
     width: 200px;
     height: 200px;
-    /* border: solid 1px white; */
+    z-index: 100;
+    background-color: #aaa;
+}
+.minimap {
+    max-width: 200px;
+    max-height: 200px;
     z-index: 100;
     background-color: #aaa;
 }

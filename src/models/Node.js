@@ -7,7 +7,7 @@ class Node {
     }
 }
 
-function createNode(type, text='') {console.log(text)
+function createNode(type, text='') {
     const node = new Node();
     node.type = type;
     node.text = text;
