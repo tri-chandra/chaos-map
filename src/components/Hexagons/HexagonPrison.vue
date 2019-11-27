@@ -5,7 +5,7 @@
       stroke="#000000"
       stroke-width="1.5px"
     />
-    <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[{{node.text}}]</text>
+    <text :x="x" :y="y+length">{{node.text}}</text>
   </g>
 </template>
 
@@ -18,21 +18,30 @@ export default {
     y: { type: Number, required: true },
     node: { type: Object, required: false }
   },
-  data() {
-    return { margin: 8 };
-  },
   computed: {
       pathString() {
         const A = 60;//60/180 * Math.PI;
-        const path = `M${this.x} ${this.y} h${this.length}` +
+        const barLength = this.length * 0.8;
+        const path = 
+            `M${this.x} ${this.y} h${this.length}` +
             `l${this.length / 2} ${Math.round(this.length * -Math.cos(A))}` +
             `l${-this.length / 2} ${Math.round(this.length * -Math.cos(A))}` +
             `h${-this.length}` +
             `l${-this.length / 2} ${Math.round(this.length * Math.cos(A))}` +
             `l${this.length / 2} ${Math.round(this.length * Math.cos(A))}` + 
-            `l${this.length * 3/2} ${Math.round(this.length * -Math.cos(A))}` +
+            // `l${this.length * 3/2} ${Math.round(this.length * -Math.cos(A))}` +
+            // `l${-this.length / 2} ${Math.round(this.length * -Math.cos(A))}` +
+            // `l${-this.length * 3/2} ${Math.round(this.length * Math.cos(A))}` +
+            `v${barLength}` +
+            `m${this.length/3} ${0} v${-barLength}` +
+            `m${this.length/3} ${0} v${barLength}` +
+            `m${this.length/3} ${0} v${-barLength}` +
+            `l${this.length / 2} ${Math.round(this.length * -Math.cos(A))}` +
             `l${-this.length / 2} ${Math.round(this.length * -Math.cos(A))}` +
-            `l${-this.length * 3/2} ${Math.round(this.length * Math.cos(A))}`;
+            `v${-barLength}` +
+            `m${-this.length/3} ${0} v${barLength}` +
+            `m${-this.length/3} ${0} v${-barLength}` +
+            `m${-this.length/3} ${0} v${barLength}`;
 
         return path;
       }

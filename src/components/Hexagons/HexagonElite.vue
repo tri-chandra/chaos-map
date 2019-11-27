@@ -5,8 +5,8 @@
         stroke="#000000"
         stroke-width="6px"
       />
-      <text :x="x" :y="y+length" color="#000000" font-size="xx-large">S</text>
-      <text :x="x" :y="y+length+margin" color="#000000" font-size="xx-small">[{{node.text}}]</text>
+      <text :x="x" :y="y+length" :font-size="length">S</text>
+      <text :x="x-margin" :y="y+length+margin">{{node.text}}</text>
     </g>
 </template>
 
@@ -20,7 +20,7 @@ export default {
     node: { type: Object, required: false }
   },
   data() {
-    return { margin: 8 };
+    return { margin: 0.2*this.length };
   },
   computed: {
       pathString() {

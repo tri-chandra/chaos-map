@@ -5,7 +5,7 @@
         stroke="#000000"
         stroke-width="1.5px"
       />
-      <text :x="x" :y="y+length" color="#000000" font-size="xx-large">?</text>
+      <text :x="x" :y="y+length" :font-size="length">?</text>
     </g>
 </template>
 

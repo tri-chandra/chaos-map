@@ -15,14 +15,6 @@
         :length="length" 
         :node="node"
     />
-    <HexagonEmpty
-        v-else-if="node.type == NodeType.Empty"
-        @click="$emit('click', node)"
-        :x="x" 
-        :y="y" 
-        :length="length" 
-        :node="node"
-    />
     <HexagonEnd
         v-else-if="node.type == NodeType.End"
         @click="$emit('click', node)"
@@ -64,7 +56,7 @@
         :node="node"
     />
     <HexagonNext
-        v-else-if="node.type == NodeType.Next"
+        v-else-if="mode == 'display' && node.type == NodeType.Next"
         @click="$emit('click', node)"
         :x="x" 
         :y="y" 
@@ -86,12 +78,6 @@
         :y="y" 
         :length="length" 
         :node="node"
-    />
-    <Hexagon 
-        v-else
-        :x="x" 
-        :y="y" 
-        :length="length" 
     />
 </template>
 
@@ -131,7 +117,8 @@ export default {
         x: Number,
         y: Number,
         node: Object,
-        length: Number
+        length: Number,
+        mode: String
     },
     data() {
         return {

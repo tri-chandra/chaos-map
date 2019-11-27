@@ -5,7 +5,7 @@
         stroke="#000000"
         stroke-width="1.5px"
       />
-      <text :x="x+margin" :y="y+length+margin" color="#000000" font-size="xx-small">[{{node.text}}]</text>
+      <text :x="x+margin" :y="y+length+margin">{{node.text}}</text>
     </g>
 </template>
 

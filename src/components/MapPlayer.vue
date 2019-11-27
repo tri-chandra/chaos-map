@@ -1,12 +1,7 @@
 <template>
     <div>
-        <div class="minimap-wrapper">
-            <p class="minimap-description">To copy</p>
-            <img class="minimap" :src="imgDataUrl"/>
-        </div>
-        
         <div class="bottom-panel">
-            <h2>Tile Type</h2>
+            <h2>Tile Type <button @click="downloadImage">Download</button></h2>
             <div class="option-flex-container">
                 <label><input type="radio" v-model="action" value="remove" />Remove</label>
                 <label><input type="radio" v-model="action" value="basic" />Basic</label>
@@ -31,7 +26,8 @@
                 </label>
             </div>
         </div>
-        <Canvas class="canvas-panel" ref="canvas" :viewBox="bbox" :width="canvasWidth">
+        <Canvas class="canvas-panel" ref="displayCanvas" :viewBox="`${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`" :width="canvasWidth">
+            <rect :x="bbox.x" :y="bbox.y" :width="bbox.width" :height="bbox.height" fill="#ffffff" />
             <template v-for="(nodes, i) in map.map">
                 <HexagonSelector 
                     v-for="(node, j) in nodes"
@@ -41,6 +37,22 @@
                     :y="map.getCoordinate(i, j).y" 
                     :length="HexSize" 
                     :node="node"
+                    mode="display"
+                />
+            </template>
+        </Canvas>
+        <Canvas class="canvas-panel hidden" ref="printCanvas" :viewBox="`${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}`" :width="canvasWidth">
+            <rect :x="bbox.x" :y="bbox.y" :width="bbox.width" :height="bbox.height" fill="#ffffff" />
+            <template v-for="(nodes, i) in map.map">
+                <HexagonSelector 
+                    v-for="(node, j) in nodes"
+                    :key="`x${i}-${j}`"
+                    @click="(n) => hexagonClicked(n, i, j)"
+                    :x="map.getCoordinate(i, j).x" 
+                    :y="map.getCoordinate(i, j).y" 
+                    :length="HexSize" 
+                    :node="node"
+                    mode="print"
                 />
             </template>
         </Canvas>
@@ -57,13 +69,13 @@ import Map from '@/models/Map'
 import Node from '@/models/Node'
 import NodeType from '@/models/NodeType'
 
-const HexSize = 50;
+const HexSize = 80;
 const initialMap = [
     [Node.createEmptyNode(), Node.createNextNode(), Node.createNextNode()],
     [Node.createNextNode(), Node.createStartingNode(), Node.createNextNode()],
     [Node.createNextNode(), Node.createNextNode(), Node.createEmptyNode(),]
 ];
-const initImg = `<svg data-v-6420b8dd="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="2.5 0 347.5 459.6" width="159" class="canvas-panel"><path data-v-6420b8dd="" d="M27.500000000000004 0 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent" node="[object Object]"></path><path data-v-6420b8dd="" d="M110.00000000000001 51.6 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M192.50000000000003 104.39999999999999 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M27.500000000000004 104.39999999999999 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M110.00000000000001 156 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="#ffffff" stroke="#12bbc7" stroke-width="8px"></path><path data-v-6420b8dd="" d="M192.50000000000003 207.6 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M27.500000000000004 207.6 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M110.00000000000001 260.4 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent"></path><path data-v-6420b8dd="" d="M192.50000000000003 312 h50l25 48l-25 48h-50l-25 -48l25 -48" fill="transparent" node="[object Object]"></path></svg>`;
+const initImg = `<svg data-v-6420b8dd="" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="4 82.80000305175781 424 484.4000244140625" width="424" class="canvas-panel"><!----><path data-v-6420b8dd="" d="M176 82.8 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><path data-v-6420b8dd="" d="M308 166.79999999999998 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><path data-v-6420b8dd="" d="M44 166.79999999999998 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><path data-v-6420b8dd="" d="M176 249.6 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#ffffff" stroke="#12bbc7" stroke-width="8px"></path><path data-v-6420b8dd="" d="M308 332.4 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><path data-v-6420b8dd="" d="M44 332.4 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><path data-v-6420b8dd="" d="M176 415.2 h80l40 76l-40 76h-80l-40 -76l40 -76" fill="#888888"></path><!----></svg>`;
 let mapper = new Map(HexSize, initialMap);
 
 export default {
@@ -84,28 +96,38 @@ export default {
 
             action: 'basic',
             imgDataUrl: `data:image/svg+xml;utf8,${encodeURIComponent(initImg)}`,
-            bbox: '2.5 0 347.5 459.6',
+            bbox: { x: 4, y: 82.80000305175781, width: 424, height: 484.4000244140625 },
+            bgWidth: 424,
+            bgHeight: 484.4000244140625,
             canvasWidth: 159
         }
     },
     methods: {
-        trimWhitespace() {
+        downloadImage () {
             Vue.nextTick(() => {
-                const box = this.$refs.canvas.$el.getBBox();
-                this.bbox = `${box.x} ${box.y} ${box.width} ${box.height}`;
-                this.canvasWidth = box.width;
+                this.bbox = this.$refs.printCanvas.$el.getBBox();
+                this.canvasWidth = this.bbox.width;
 
                 Vue.nextTick(async () => {
-                    let svgString = (this.$refs.canvas.$el.outerHTML).split('#888888').join('transparent');
+                    let svgString = (this.$refs.printCanvas.$el.outerHTML).split('#888888').join('transparent').split('<!---->').join('');
  
-                    const converter  = await SVGConverter.loadFromElement(`data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`, box.width, box.height);
+                    const converter  = await SVGConverter.loadFromElement(`data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`, this.bbox.width, this.bbox.height);
                     this.imgDataUrl = converter.pngDataURL();
-
-                    // this.imgDataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgString)}`;
+ 
+                    const a = document.createElement("a");
+                    a.href = converter.pngDataURL();
+                    a.setAttribute('download', 'chaos.png');
+                    a.click();
                 });
             });
         },
-        hexagonClicked(node, i, j) {
+        trimWhitespace() {
+            Vue.nextTick(() => {
+                this.bbox = this.$refs.displayCanvas.$el.getBBox();
+                this.canvasWidth = this.bbox.width;
+            });
+        },
+        hexagonClicked(node, i, j) {this.trimWhitespace();
             if (this.action == 'remove') {
                 if (this.map.map[i][j].type != NodeType.Start && this.map.map[i][j].type != NodeType.Next) {
                     this.map.removeValue(Node.createEmptyNode(), {x: j, y: i}, Node.createNextNode(), Node.createEmptyNode());
@@ -137,7 +159,7 @@ export default {
 <style scoped>
 .bottom-panel {
     height: 200px;
-    width: calc(100vw - 200px);
+    width: 100vw;
     position: fixed;
     z-index: 1;
     bottom: 0;
@@ -148,32 +170,12 @@ export default {
 .canvas-panel {
     /* margin-left: 200px; */
     overflow: scroll;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 220px);
     width: 100vw;
 }
-.minimap-wrapper {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 200px;
-    height: 200px;
-    z-index: 100;
-    background-color: #aaa;
-}
-.minimap {
-    max-width: 200px;
-    max-height: 200px;
-    z-index: 100;
-    background-color: #aaa;
-}
-.minimap-description {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 200px;
-    margin: 0;
-    padding: 0;
-    z-index: 101;
+.hidden {
+    position: absolute;
+    top: -100000px;
 }
 .option-flex-container {
     display: flex;
