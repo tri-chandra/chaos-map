@@ -31,6 +31,14 @@
         :length="length" 
         :node="node"
     />
+    <HexagonStore
+        v-else-if="node.type == NodeType.Store"
+        @click="$emit('click', node)"
+        :x="x" 
+        :y="y" 
+        :length="length" 
+        :node="node"
+    />
     <HexagonGold
         v-else-if="node.type == NodeType.Gold"
         @click="$emit('click', node)"
@@ -94,6 +102,7 @@ import HexagonMonument from '@/components/Hexagons/HexagonMonument'
 import HexagonNext from '@/components/Hexagons/HexagonNext'
 import HexagonPrison from '@/components/Hexagons/HexagonPrison'
 import HexagonStart from '@/components/Hexagons/HexagonStart'
+import HexagonStore from '@/components/Hexagons/HexagonStore'
 
 import NodeType from '@/models/NodeType'
 
@@ -111,7 +120,8 @@ export default {
         HexagonMonument,
         HexagonNext,
         HexagonPrison,
-        HexagonStart
+        HexagonStart,
+        HexagonStore
     },
     props: {
         x: Number,

@@ -27,5 +27,6 @@ Node.createNextNode = () => createNode(NodeType.Next);
 Node.createMonumentNode = (text) => createNode(NodeType.Monument, text);
 Node.createPrisonNode = (text) => createNode(NodeType.Prison, text);
 Node.createStartNode = () => createNode(NodeType.Start);
+Node.createStoreNode = () => createNode(NodeType.Store);
 
 export default Node;

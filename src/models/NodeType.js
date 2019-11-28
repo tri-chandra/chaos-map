@@ -9,5 +9,6 @@ export default {
     Start: 6,
     End: 7,
     Gold: 8,
-    Healing: 10
+    Healing: 10,
+    Store: 11
 }

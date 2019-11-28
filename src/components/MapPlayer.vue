@@ -1,19 +1,20 @@
 <template>
     <div>
         <div class="bottom-panel">
-            <h2>Tile Type <button @click="downloadImage">Download</button></h2>
+            <h2>Block Type <button @click="downloadImage">Download</button></h2>
             <div class="option-flex-container">
                 <label><input type="radio" v-model="action" value="remove" />Remove</label>
-                <label><input type="radio" v-model="action" value="basic" />Basic</label>
+                <label><input type="radio" v-model="action" value="basic" />Battle</label>
                 <label><input type="radio" v-model="action" value="elite" />
                     Elite
                     <input v-model="nodeText" :style="{display:(action!='elite'?'none':'block')}" />
                 </label>
-                <label><input type="radio" v-model="action" value="event" />Event</label>
-                <label><input type="radio" v-model="action" value="gold" />Gold</label>
-                <label><input type="radio" v-model="action" value="healing" />Healing</label>
+                <label><input type="radio" v-model="action" value="event" />Destiny</label>
+                <label><input type="radio" v-model="action" value="store" />Chaos Store</label>
+                <label><input type="radio" v-model="action" value="gold" />Golden Curse</label>
+                <label><input type="radio" v-model="action" value="healing" />Vital Spring</label>
                 <label><input type="radio" v-model="action" value="monument" />
-                    Monument
+                    Monument of Wishes
                     <input v-model="nodeText" :style="{display:(action!='monument'?'none':'block')}" />
                 </label>
                 <label><input type="radio" v-model="action" value="prison" />
@@ -21,7 +22,7 @@
                     <input v-model="nodeText"  :style="{display:(action!='prison'?'none':'block')}" />
                 </label>
                 <label><input type="radio" v-model="action" value="end" />
-                    End Tile
+                    Finishing
                     <input v-model="nodeText"  :style="{display:(action!='end'?'none':'block')}" />
                 </label>
             </div>
@@ -99,7 +100,31 @@ export default {
             bbox: { x: 4, y: 82.80000305175781, width: 424, height: 484.4000244140625 },
             bgWidth: 424,
             bgHeight: 484.4000244140625,
-            canvasWidth: 159
+            canvasWidth: 159,
+
+            monsterList: [
+                'Undead Viking',
+                'Gnome Mage',
+                'Spear Knight',
+                'Cannon Ogre',
+                'Ogre',
+                'Demon Rabbit',
+                'Halberd Viking',
+                'Orc Warrior',
+                'Orc Shaman',
+                'Giant Armor',
+                'Skeleton Wyvern',
+                'Succubus',
+                'Slingshot Orc',
+                'Death Knight',
+                'Skeleton Lord',
+                'Skeleton Summoner',
+                'Valkyrie',
+                'Frozen Viking',
+                'Elder Wizard',
+                'Orc Captain',
+                'Sniper'
+            ]
         }
     },
     methods: {
@@ -136,19 +161,22 @@ export default {
                 return;
             }
 
-            if (this.map.map[i][j].type != NodeType.Next) return;
+            // if (this.map.map[i][j].type != NodeType.Next) return;
+            if (this.map.map[i][j].type == NodeType.Start) return;
 
             let toCreate = null;
             switch (this.action) {
                 case 'basic': toCreate = Node.createBasicNode(); break;
                 case 'elite': toCreate = Node.createEliteNode(this.nodeText); break;
                 case 'event': toCreate = Node.createEventNode(); break;
+                case 'store': toCreate = Node.createStoreNode(); break;
                 case 'gold': toCreate = Node.createGoldNode(); break;
                 case 'healing': toCreate = Node.createHealingNode(); break;
                 case 'monument': toCreate = Node.createMonumentNode(this.nodeText); break;
                 case 'prison': toCreate = Node.createPrisonNode(this.nodeText); break;
                 case 'end': toCreate = Node.createEndNode(this.nodeText); break;
             }
+            this.nodeText = ''
             this.map.setValue(toCreate, {x: j, y: i}, Node.createNextNode(), Node.createEmptyNode());
             this.trimWhitespace();
         }
@@ -187,7 +215,7 @@ label {
     position: absolute; */
     padding-left: 20px;
     padding-bottom: 4px;
-    width: 150px;
+    width: 200px;
     text-align: left;
 }
 </style>
